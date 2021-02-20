@@ -14,10 +14,15 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final int WIDTH = 500;
 	private final int SCOREBOARD = 50;
 	private final int HEIGHT = 500 + SCOREBOARD;
-	public static final int TILE_SIZE = 10;
+	private final int TILE_SIZE = 10;
 	private boolean running = true;
 	private int ticks;
 	
@@ -37,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	
 	public GamePanel() {
 		setFocusable(true);
-		setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		setPreferredSize(new Dimension(WIDTH+300, HEIGHT));
 		addKeyListener(this);
 		setBackground(Color.BLACK);
 		
@@ -49,7 +54,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		
 		start();
 	}
-
+	
 	public void start() {
 		running = true;
 		thread = new Thread(this);
@@ -58,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	
 	public void stop() {
 		running = false;
+		ScoreBoard.saveNewRecord(score);
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
@@ -75,7 +81,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	
 	public void tick() {
 		if (snakes.size() == 0) {
-			newPart = new snake(headX, headY);
+			newPart = new snake(headX, headY, TILE_SIZE);
 			snakes.add(newPart);
 		}
 		ticks++;
@@ -100,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 					headY += TILE_SIZE;
 				break;
 			}
-			newPart = new snake(headX, headY);
+			newPart = new snake(headX, headY, TILE_SIZE);
 			snakes.add(newPart);
 			
 			if (snakes.size() > snakeSize) {
@@ -115,7 +121,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 			
 			if (headX == appleX && headY == appleY) {
 				snakeSize++;
-				score++;
+				score+=100;
 				hasApple = false;
 			}
 			
@@ -141,9 +147,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		
 		g.setColor(Color.WHITE);
 		g.drawLine(0, SCOREBOARD, WIDTH, SCOREBOARD);
-//		g.drawLine(0, SCOREBOARD, 0, HEIGHT);
-//		g.drawLine(WIDTH, HEIGHT, 0, HEIGHT);
-//		g.drawLine(WIDTH, HEIGHT, WIDTH, 0);
+		g.drawLine(WIDTH, 0, WIDTH, HEIGHT);
 		
 		//paint snake
 		g.setColor(Color.green);
@@ -202,6 +206,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public int getWIDTH() {
+		return WIDTH;
+	}
+
+	public int getHEIGHT() {
+		return HEIGHT;
+	}
+
+	public int getTILE_SIZE() {
+		return TILE_SIZE;
 	}
 
 }
